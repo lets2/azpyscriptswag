@@ -1,0 +1,26 @@
+openapi: 3.0.0
+info:
+    title: Example API
+    version: 1.0.2
+servers:
+    - url: "https://api.example.com/v1"
+    - url: "https://api.example.com/v2"
+paths:
+    /users:
+        get:
+            summary: Get users
+            responses:
+                "200":
+                    description: OK
+    /hzzouses:
+        post:
+            summary: Create house
+            responses:
+                "201":
+                    description: Created
+    /cars:
+        put:
+            summary: Update car
+            responses:
+                "204":
+                    description: No Content

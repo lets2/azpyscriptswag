@@ -1,0 +1,67 @@
+trigger:
+  - main
+
+pool:
+  name: "Default" # pool onde está o self-hosted agent
+  demands:
+    - agent.name -equals mylinuxagent
+
+variables:
+  solution: "*.sln"
+  buildPlataform: "Any CPU"
+  buildConfiguration: "Release"
+
+jobs:
+  - job: SwaggerValidation
+    displayName: "Swagger Validation Job"
+    steps:
+      # - task: UsePythonVersion@0
+      #   displayName: "Ensure Python Version 3"
+      #   inputs:
+      #     versionSpec: "3.x" 
+
+      - script: |
+          python -m pip install --upgrade pip
+          pip install pyyaml gitpython
+          python validate_swag.py
+        displayName: "Run Swagger Validation"
+
+      - script: |
+          echo "------------------"
+          echo "Job swagger validation okay!"
+          echo "------------------"
+        displayName: "SwaggerValidation okay"
+
+  - job: BuildAndDeploy
+    displayName: "Build and Deploy Job"
+    dependsOn: SwaggerValidation # depende do job anterior
+    condition: succeeded() # e apenas se job anterior foi bem-sucedido
+    steps:
+      - task: UseDotNet@2
+        displayName: "Install .Net SDK"
+        inputs:
+          packageType: "sdk"
+          version: "8.x"
+
+      - script: dotnet restore $(solution)
+        displayName: "Restore solution"
+
+      - script: dotnet build $(solution) --configuration $(buildConfiguration)
+        displayName: "Build solution"
+
+      - script: dotnet test $(solution) --configuration $(buildConfiguration) --no-build --collect:"XPlat Code Coverage"
+        displayName: "Test solution"
+
+      # - task: Docker@2
+      #   displayName: "Build and Push Docker Image"
+      #   inputs:
+      #     containerRegistry: "dockerhubconnection"
+      #     repository: "lets2/weatherapi"
+      #     command: "buildAndPush"
+      #     Dockerfile: "**/Dockerfile"
+
+      - script: |
+          echo "------------------"
+          echo "Pipeline finished!"
+          echo "------------------"
+        displayName: "Last step - echo message"

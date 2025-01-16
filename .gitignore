@@ -1,0 +1,37 @@
+# ignore build outputs
+bin/
+obj/
+
+# user files
+*.user
+*.rsuser
+*.suo
+
+*.log
+
+# ASP.NET Core settings
+appsettings*.json
+!appsettings.json
+*.Environment.json
+
+# dependency
+**/node_modules/
+**/bower_components/
+
+# IDEs
+.vscode/
+.idea/
+.vscode/*
+.history/
+
+## OS
+.DS_Store
+Thumbs.db
+
+# for python projects
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.swp
