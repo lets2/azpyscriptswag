@@ -1,0 +1,29 @@
+parameters:
+    - name: jobName # defaults for any parameters that aren't specified
+      default: ""
+      type: string
+
+    - name: pythonScriptPath
+      default: "main.py"
+      type: string
+
+jobs:
+    - job: ${{ parameters.jobName }}
+      # displayName: "Swagger Validation Job"
+      steps:
+          # - task: UsePythonVersion@0
+          #   displayName: "Ensure Python Version 3"
+          #   inputs:
+          #     versionSpec: "3.x"
+
+          - script: |
+                python -m pip install --upgrade pip
+                pip install pyyaml gitpython
+                python ./${{ parameters.pythonScriptPath }}
+            displayName: "Run ${{ parameters.jobName }}"
+
+          - script: |
+                echo "------------------"
+                echo "Job ${{ parameters.jobName }} is okay!"
+                echo "------------------"
+            displayName: "${{ parameters.jobName }} okay"
