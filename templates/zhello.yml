@@ -1,0 +1,19 @@
+# REPO: devops-templates
+
+parameters:
+    - name: "userName"
+      default: "contributor"
+      type: string
+
+    - name: "jobName"
+      default: "JobFromAnotherRepo"
+      type: string
+
+jobs:
+    - job: ${{ parameters.jobName }}
+      steps:
+          - script: echo "Hello World!"
+            displayName: Print Hello World
+
+          - script: echo "Hello, ${{ parameters.userName }}!"
+            displayName: Greet User

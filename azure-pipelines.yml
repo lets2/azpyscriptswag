@@ -1,6 +1,13 @@
 trigger:
     - main
 
+resources:
+    repositories:
+        - repository: templatesalias
+          type: git # using type: git for az devops repos , using type: github for github repos
+          name: devops-templates
+          ref: refs/heads/main #using main branch, is possible use tags and commit too
+
 pool:
     name: "Default" # pool onde está o self-hosted agent
     demands:
@@ -16,6 +23,11 @@ jobs:
       parameters:
           jobName: "SwaggerValidation"
           pythonScriptPath: "scriptvalidate_swag.py"
+
+    - template: hello.yml@templatesalias #templatealias is a ref for another repo
+      parameters:
+          jobName: "New_hello_job_name"
+          userName: "John"
 
     - job: BuildAndDeploy
       displayName: "Build and Deploy Job"
