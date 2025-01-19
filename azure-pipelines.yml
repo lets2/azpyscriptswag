@@ -14,9 +14,15 @@ pool:
         - agent.name -equals mylinuxagent
 
 variables:
-    solution: "*.sln"
-    buildPlataform: "Any CPU"
-    buildConfiguration: "Release"
+    - name: "solution"
+      value: "*.sln"
+    - name: "buildPlataform"
+      value: "Any CPU"
+    - name: "buildConfiguration"
+      value: "Release"
+    - group: "config-group" # have nickname and role variables
+    - name: "myPassedVariable"
+      value: $[variables.role]
 
 jobs:
     - template: templates/validate-swag.yml
@@ -60,5 +66,7 @@ jobs:
           - script: |
                 echo "------------------"
                 echo "Pipeline finished!"
+                echo "$(nickname) - $(myPassedVariable)!"
+                echo "Pipeline finished!"
                 echo "------------------"
-            displayName: "Last step - echo message"
+            displayName: "Last step - echo message for $(nickname)"
