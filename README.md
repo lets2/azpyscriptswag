@@ -146,3 +146,7 @@ python validate_swagger.py swagger_valid.yaml
 # Testar com o arquivo inválido
 
 python validate_swagger.py swagger_invalid.yaml
+
+# Criar branch sem commits para testar commit unico
+
+git checkout --orphan test-single-commit

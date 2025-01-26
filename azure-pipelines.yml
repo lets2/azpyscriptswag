@@ -68,5 +68,8 @@ jobs:
                 echo "Pipeline finished!"
                 echo "$(nickname) - $(myPassedVariable)!"
                 echo "Pipeline finished!"
+                echo "The value of my secret variable is: $MY_MAPPED_ENV_VAR"
                 echo "------------------"
+            env:
+                MY_MAPPED_ENV_VAR: $(VAR_SECRET) # the recommended way to map to an env variable
             displayName: "Last step - echo message for $(nickname)"

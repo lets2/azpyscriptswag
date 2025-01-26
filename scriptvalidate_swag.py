@@ -13,16 +13,23 @@ LINK_WITH_EXAMPLE2 = 'paths: use /accounts instead of /ob/v2/accounts"]'
 # step 1: Locate swagger file
 def find_swagger_file():
     for file in os.listdir('.'):
-        if re.search(r'swagger', file, re.IGNORECASE):
+        if re.search(r'swagger*.yaml', file, re.IGNORECASE):
             return file
     return None
 
-# # step 2: Check if file was modified
-# def file_modified(repo, file_path):
-#     # diff = repo.git.diff('HEAD~1', 'HEAD', file_path)
-#     # diff = repo.git.diff('HEAD', '--', file_path)
-#     diff = repo.git.diff('HEAD~1', 'HEAD', '--', file_path)
-#     return bool(diff)
+# step 2: Check if file was modified
+def file_modified(repo, file_path):
+    if not has_enough_commits(repo):
+        print("=================================================================================")
+        print("Not enough commits in the branch to perform a diff. Its probably the first commit")
+        print("=================================================================================")
+        return True
+
+    diff = repo.git.diff('HEAD~1', 'HEAD', '--', file_path)
+    return bool(diff)
+
+def has_enough_commits(repo, num_commits=2):
+    return len(list(repo.iter_commits())) >= num_commits
 
 # step 3: Load YAML and validate
 def validate_swagger(file_path):
@@ -47,22 +54,32 @@ def validate_swagger(file_path):
         print(f"Example: {LINK_WITH_EXAMPLE2}")
         exit(1)
     else:
+        print("===============================================================")
         print(f"{file_path} is within the standard.")
+        print("===============================================================")
 
 def main():
     repo = Repo('.')
     swagger_file = find_swagger_file()
 
     if not swagger_file:
+        print("================================================================")
         print("No Swagger file found. Skipping this step.")
+        print("================================================================")
         return
 
-    # if not file_modified(repo, swagger_file):
-    #     print(f"No changes detected in {swagger_file}. Skipping this step.")
-    #     return
+    if not file_modified(repo, swagger_file):
 
+        print("===============================================================")
+        print(f"No changes detected in {swagger_file}. Skipping this step.")
+        print("===============================================================")
+        return
+    
+    print("===============================================================")
     print(f"Processing {swagger_file}...")
+    print("===============================================================")
     validate_swagger(swagger_file)
+    print("===============================================================")
 
 if __name__ == '__main__':
     main()

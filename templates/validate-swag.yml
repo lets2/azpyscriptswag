@@ -15,6 +15,9 @@ jobs:
           #   displayName: "Ensure Python Version 3"
           #   inputs:
           #     versionSpec: "3.x"
+          - checkout: self
+            fetchDepth: 2 #fetch last 2 commits
+            displayName: "Checkout the last 2 commits"
 
           - script: |
                 python -m pip install --upgrade pip
