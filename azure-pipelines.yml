@@ -35,6 +35,13 @@ jobs:
           jobName: "New_hello_job_name"
           userName: "John"
 
+    - template: templates/validate-swag.yml@templatesalias
+      parameters:
+          jobName: "TemplateSwaggerValidation"
+          repoName: "PrimeiroProjDotnet" # Passando o nome do repositório
+          aliasTemplateRepoName: "templatesalias" # Passando alias do template repo
+          # pythonScriptPath: "templates/main.py"
+
     - job: BuildAndDeploy
       displayName: "Build and Deploy Job"
       dependsOn: SwaggerValidation # depende do job anterior

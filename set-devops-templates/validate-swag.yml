@@ -1,0 +1,44 @@
+parameters:
+    - name: jobName
+      default: ""
+      type: string
+
+    - name: pythonScriptPath
+      default: "templates/main.py"
+      type: string
+
+    - name: repoName # Novo parâmetro para o nome do repositório que usa o template
+      type: string
+
+    - name: aliasTemplateRepoName # alias do repositorio do presente template, talvez no futuro mudar de job pra tasks, assim nao usaria checkout
+      default: git://AZURE/devops-templates # alias (@templatealias) ou  git://org/repo
+      type: string
+
+jobs:
+    - job: ${{ parameters.jobName }}
+      steps:
+          - checkout: self
+            fetchDepth: 2
+            displayName: "Checkout the last 2 commits"
+
+          - checkout: ${{ parameters.aliasTemplateRepoName }}
+            path: devops-templates
+            displayName: "Checkout devops-templates"
+
+          - script: |
+                sudo apt-get update && sudo apt-get install -y tree
+                echo "Exibindo estrutura de diretórios..."
+                tree -L 3
+            displayName: "Listar estrutura de diretórios"
+
+          - script: |
+                ls -la $(Pipeline.Workspace)
+                ls -la $(Pipeline.Workspace)/s
+                ls -la $(Pipeline.Workspace)/s/${{ parameters.repoName }}
+            displayName: "Verificar estrutura do workspace"
+
+          - script: |
+                python -m pip install --upgrade pip
+                pip install pyyaml gitpython
+                python $(Pipeline.Workspace)/devops-templates/${{ parameters.pythonScriptPath }} $(Pipeline.Workspace)/s/${{ parameters.repoName }}
+            displayName: "Run ${{ parameters.jobName }}"
